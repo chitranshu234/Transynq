@@ -20,7 +20,7 @@ cd backend
 mvn spring-boot:run
 ```
 The server starts on `http://localhost:8080` with an in-memory H2 database.  
-Asset **TR-101** is seeded automatically. The 3-second simulation begins immediately.
+Assets **TR-101** (Main Power Transformer), **TR-202** (Distribution Transformer), and **SG-301** (11 kV Switchgear Panel) are seeded automatically. The 3-second simulation begins immediately for all assets.
 
 ### 2. Start the Frontend (port 5173)
 ```bash
@@ -32,10 +32,11 @@ Open **http://localhost:5173** in your browser.
 The Vite dev server proxies `/api` calls to the backend at port 8080.
 
 ### 3. Use the Application
-- **Dashboard (/):** Live sensor readings, charts, health gauge, and scenario buttons
-- **History (/history):** Time-filtered historical readings (15 min / 1 hr / 24 hr)
-- **Alerts (/alerts):** Alert audit log with severity filters
-- Click **OVERHEATING** or **GAS_ANOMALY** scenario buttons to trigger simulated faults
+- **Asset Selector:** Switch between **TR-101**, **TR-202**, and **SG-301** directly from the top bar dropdown
+- **Dashboard (/):** Live sensor readings, charts, health gauge, and scenario buttons for the active asset
+- **History (/history):** Time-filtered historical readings (15 min / 1 hr / 24 hr) for the selected asset
+- **Alerts (/alerts):** Alert audit log with severity filters for the selected asset
+- Click **OVERHEATING** or **GAS_ANOMALY** scenario buttons to trigger simulated faults on the active asset
 
 ---
 
