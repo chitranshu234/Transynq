@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import TopBar from "../components/TopBar";
 import { fetchAlerts } from "../services/api";
+import { useAsset } from "../context/AssetContext";
 import { FiAlertTriangle, FiAlertOctagon, FiCheckCircle, FiRefreshCw, FiFilter } from "react-icons/fi";
 
 export default function AlertsView() {
+  const { selectedAssetId: assetId, selectedAsset } = useAsset();
   const [alerts, setAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [severityFilter, setSeverityFilter] = useState("ALL");
   const [error, setError] = useState(null);
 
-  const assetId = 1;
-
-  const loadAlertsData = async () => {
+  const loadAlertsData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -23,11 +23,11 @@ export default function AlertsView() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [assetId]);
 
   useEffect(() => {
     loadAlertsData();
-  }, []);
+  }, [loadAlertsData]);
 
   const filteredAlerts = alerts.filter((a) => {
     if (severityFilter === "ALL") return true;
