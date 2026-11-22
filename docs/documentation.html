@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Transynq — Electrical Asset Digital Twin Architectural Specification & Codebase Guide</title>
+<style>
+  @page {
+    size: A4;
+    margin: 20mm 15mm 20mm 15mm;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    color: #1e293b;
+    font-size: 11pt;
+    margin: 0;
+    padding: 0;
+  }
+  h1 {
+    font-size: 24pt;
+    color: #0f172a;
+    border-bottom: 2px solid #0284c7;
+    padding-bottom: 8px;
+    margin-top: 0;
+  }
+  h2 {
+    font-size: 16pt;
+    color: #0369a1;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4px;
+    margin-top: 24pt;
+    page-break-after: avoid;
+  }
+  h3 {
+    font-size: 13pt;
+    color: #0f172a;
+    margin-top: 14pt;
+    margin-bottom: 6pt;
+    page-break-after: avoid;
+  }
+  p, li {
+    font-size: 10.5pt;
+    color: #334155;
+  }
+  .header-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 6px;
+    font-size: 9pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .meta-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #0284c7;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+  }
+  .meta-box table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .meta-box td {
+    padding: 4px 8px;
+    font-size: 10pt;
+  }
+  .meta-box td.label {
+    font-weight: bold;
+    color: #475569;
+    width: 25%;
+  }
+  table.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 9.5pt;
+    page-break-inside: avoid;
+  }
+  table.data-table th {
+    background: #f1f5f9;
+    color: #0f172a;
+    text-align: left;
+    padding: 8px 10px;
+    border: 1px solid #cbd5e1;
+    font-weight: 700;
+  }
+  table.data-table td {
+    padding: 7px 10px;
+    border: 1px solid #cbd5e1;
+    vertical-align: top;
+  }
+  table.data-table tr:nth-child(even) {
+    background: #f8fafc;
+  }
+  code {
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    font-size: 9.5pt;
+    background: #f1f5f9;
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #0369a1;
+  }
+  pre {
+    background: #0f172a;
+    color: #f8fafc;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: Consolas, "Liberation Mono", Courier, monospace;
+    font-size: 8.5pt;
+    overflow-x: auto;
+    page-break-inside: avoid;
+  }
+  .file-card {
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+  }
+  .file-card .file-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #f1f5f9;
+    padding-bottom: 4px;
+    margin-bottom: 6px;
+  }
+  .file-card .file-path {
+    font-family: Consolas, monospace;
+    font-weight: bold;
+    font-size: 10pt;
+    color: #0284c7;
+  }
+  .file-card .file-role {
+    font-size: 8.5pt;
+    color: #64748b;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .file-desc {
+    font-size: 9.5pt;
+    color: #334155;
+    margin: 4px 0;
+  }
+  .file-why {
+    font-size: 9pt;
+    color: #047857;
+    background: #ecfdf5;
+    border-left: 3px solid #10b981;
+    padding: 4px 8px;
+    margin-top: 6px;
+    border-radius: 2px;
+  }
+  .page-break {
+    page-break-after: always;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-badge">Rugged Monitoring Take-Home Assignment Specification</div>
+<h1>Transynq — Electrical Asset Digital Twin</h1>
+<p style="font-size: 13pt; color: #475569; margin-top: -6px;">
+  System Architecture, Comprehensive Codebase Breakdown & Engineering Report
+</p>
+
+<div class="meta-box">
+  <table>
+    <tr>
+      <td class="label">Project Title:</td>
+      <td><strong>Transynq</strong> (Electrical Asset Digital Twin)</td>
+      <td class="label">Candidate:</td>
+      <td><strong>Chitranshu Pandey</strong></td>
+    </tr>
+    <tr>
+      <td class="label">Assignment Track:</td>
+      <td>Digital Twin for Electrical Assets</td>
+      <td class="label">Submission Deadline:</td>
+      <td>Sunday, 29 November 2026, 11:59 PM IST</td>
+    </tr>
+    <tr>
+      <td class="label">Primary Stack:</td>
+      <td>Java 17 / Spring Boot 3.4.1 (Backend) &bull; React 19 / Vite / Tailwind CSS / Chart.js (Frontend)</td>
+      <td class="label">GitHub Repository:</td>
+      <td><code>https://github.com/chitranshu234/Transynq</code></td>
+    </tr>
+  </table>
+</div>
+
+<h2>1. Executive Summary & Problem Scope</h2>
+<p>
+  Transynq is a high-availability digital twin monitoring platform built for critical electrical substation infrastructure (Heavy Step-Down Power Transformers, Medium Distribution Transformers, and 11 kV Switchgear Panels). Electrical assets in transmission and distribution networks are subject to severe dielectric, thermal, and mechanical stresses. Transynq continuously digests simulated multi-sensor telemetry, computes quantitative asset health scores according to international engineering standards (IEEE C57.104, IEC 60076-7), fires state-transition alerts, and provides operators with historical telemetry audit capabilities.
+</p>
+
+<h3>Core Mandatory Outcomes Satisfied</h3>
+<ul>
+  <li><strong>Live View of Asset Health:</strong> Continuous telemetry of Top Oil Temperature, Hot-Spot Winding Temperature, Electrical Load Factor, and Dissolved Hydrogen ($H_2$) gas generated from simulated physical equations.</li>
+  <li><strong>Automated Anomaly Alerting:</strong> Deterministic transition-based alerting that flags Warning and Critical states without flooding database logs on every tick.</li>
+  <li><strong>Historical Audit Logs:</strong> Time-filtered history queries (15 min, 1 hr, 24 hr) accompanied by dual-axis visual trends and exportable tabular logs.</li>
+</ul>
+
+<div class="page-break"></div>
+
+<h2>2. Comprehensive File-by-File Breakdown</h2>
+<p>
+  Every single file in the repository serves a distinct architectural purpose. Below is the full inventory explaining what each file does and why it is indispensable to the system.
+</p>
+
+<h3>Backend Architecture (Spring Boot 3.4.1 / Java 17)</h3>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">backend/pom.xml</span>
+    <span class="file-role">Build & Dependency Manifest</span>
+  </div>
+  <div class="file-desc">Configures Maven build, Java 17 toolchain, and manages dependencies: Spring Boot Web, Spring Data JPA, Jakarta Validation, H2 In-Memory DB, and PostgreSQL JDBC Driver.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Provides reproducible automated compilation, dependency locking, and dual-database support without manual JAR management.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/TransynqApplication.java</span>
+    <span class="file-role">Application Bootstrap</span>
+  </div>
+  <div class="file-desc">Spring Boot application entry point annotated with <code>@SpringBootApplication</code> and <code>@EnableScheduling</code>.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Initializes Spring IoC container, auto-discovers beans, and activates background timer threads required for the 3-second simulation loop.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/entity/Asset.java</span>
+    <span class="file-role">JPA Domain Model</span>
+  </div>
+  <div class="file-desc">Persistent entity mapping electrical equipment (id, code, name, location, active scenario, and overall health status) with unique index on asset code.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Enables multi-asset monitoring (TR-101, TR-202, SG-301) and decouples asset identity from dynamic telemetry readings.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/entity/Reading.java</span>
+    <span class="file-role">Time-Series Domain Model</span>
+  </div>
+  <div class="file-desc">Persistent entity storing individual sensor snapshots (oil temp, winding temp, load factor, hydrogen ppm, health score, status) indexed by <code>(asset_id, recorded_at)</code>.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Provides historical persistence and query optimization for high-throughput time-series telemetry lookups.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/entity/Alert.java</span>
+    <span class="file-role">Event Log Domain Model</span>
+  </div>
+  <div class="file-desc">Persistent entity recording threshold violation events (parameter, severity, message, recordedAt, resolvedAt).</div>
+  <div class="file-why"><strong>Why Needed:</strong> Maintains immutable audit logs for compliance, failure investigation, and alert life-cycle resolution.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/repository/AssetRepository.java</span>
+    <span class="file-role">Data Access Layer</span>
+  </div>
+  <div class="file-desc">Spring Data JPA repository providing CRUD and existence check methods (<code>existsByCode</code>, <code>findByCode</code>).</div>
+  <div class="file-why"><strong>Why Needed:</strong> Eliminates manual boilerplate SQL and manages asset entity persistence.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/repository/ReadingRepository.java</span>
+    <span class="file-role">Data Access Layer</span>
+  </div>
+  <div class="file-desc">JPA repository executing indexed queries for latest readings and time-bounded history (<code>findByAssetIdAndRecordedAtAfterOrderByRecordedAtDesc</code>).</div>
+  <div class="file-why"><strong>Why Needed:</strong> Feeds the 15-minute, 1-hour, and 24-hour historical charting views with minimal database latency.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/repository/AlertRepository.java</span>
+    <span class="file-role">Data Access Layer</span>
+  </div>
+  <div class="file-desc">JPA repository querying active unresolved alerts and historical anomaly logs.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Enables the alert state machine to detect open alerts, prevent duplicates, and timestamp resolution upon recovery.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/service/SimulationService.java</span>
+    <span class="file-role">Core Simulation Engine</span>
+  </div>
+  <div class="file-desc">Scheduled background service (3000 ms tick) executing bounded physics drift equations for Normal, Overheating, and Gas Anomaly states across all assets.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Simulates realistic transformer physics with thermal inertia and ambient lag, avoiding unconstrained random jumps.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/service/HealthEvaluationService.java</span>
+    <span class="file-role">Deterministic Rules Engine</span>
+  </div>
+  <div class="file-desc">Evaluates raw sensor metrics against IEEE/IEC thresholds and calculates weighted 0–100 health index.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Provides deterministic, auditable health diagnostics without subjective heuristics.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/service/AlertService.java</span>
+    <span class="file-role">State Transition Manager</span>
+  </div>
+  <div class="file-desc">Manages alert lifecycle: triggers on status changes (HEALTHY &rarr; WARNING &rarr; CRITICAL) and auto-resolves open alerts on recovery.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Prevents database log flooding by rejecting redundant duplicate alerts during ongoing faults.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/service/SseStreamService.java</span>
+    <span class="file-role">Real-Time Streaming Broker</span>
+  </div>
+  <div class="file-desc">Maintains thread-safe concurrent map of active <code>SseEmitter</code> instances per asset and broadcasts live JSON snapshots every 3 seconds.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Provides unidirectional real-time data push with native browser auto-reconnection and zero external broker overhead.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/service/ScenarioSecurityService.java</span>
+    <span class="file-role">Security & Rate Limiting Service</span>
+  </div>
+  <div class="file-desc">Implements sliding-window IP rate limiting (10 requests / 10s) and optional API Key authentication for simulation mutation endpoints.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Protects operational control endpoints against abuse, simulation tampering, and denial-of-service floods.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/controller/AssetController.java</span>
+    <span class="file-role">REST API Controller</span>
+  </div>
+  <div class="file-desc">Exposes endpoints for asset catalog (<code>GET /api/assets</code>), latest reading (<code>GET /api/assets/{id}/latest</code>), and validated scenario updates (<code>POST /api/assets/{id}/scenario</code>).</div>
+  <div class="file-why"><strong>Why Needed:</strong> Acts as the client entry point for dashboard bootstrapping and operator scenario switching.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/controller/HistoryController.java</span>
+    <span class="file-role">REST API Controller</span>
+  </div>
+  <div class="file-desc">Exposes time-filtered telemetry queries (<code>GET /api/assets/{id}/history?minutes=...</code>) and alert audit logs (<code>GET /api/assets/{id}/alerts</code>).</div>
+  <div class="file-why"><strong>Why Needed:</strong> Serves historical analytics, charts, and compliance audit tables.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/controller/StreamController.java</span>
+    <span class="file-role">SSE Endpoint Controller</span>
+  </div>
+  <div class="file-desc">Exposes <code>GET /api/assets/{id}/stream</code> as <code>text/event-stream</code>, returning immediate snapshot and registering the emitter.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Establishes continuous live telemetry stream between backend simulation and frontend charts.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/dto/ReadingDto.java</span>
+    <span class="file-role">Data Transfer Object</span>
+  </div>
+  <div class="file-desc">Clean, immutable representation of a telemetry reading sent over JSON and SSE.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Decouples internal database schema from external API contracts, preventing accidental schema leakage.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/dto/ScenarioRequest.java</span>
+    <span class="file-role">Validated Request DTO</span>
+  </div>
+  <div class="file-desc">Request payload for scenario changes validated with <code>@NotBlank</code> and <code>@Pattern(regexp="^(?i)(NORMAL|OVERHEATING|GAS_ANOMALY)$")</code>.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Prevents malformed or malicious scenario injection into the simulation state machine.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/dto/ErrorResponse.java</span>
+    <span class="file-role">Standard Error DTO</span>
+  </div>
+  <div class="file-desc">Standardized JSON error envelope (timestamp, status, error, message, path, details).</div>
+  <div class="file-why"><strong>Why Needed:</strong> Guarantees uniform error payloads across all endpoints and suppresses sensitive stack traces.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/exception/GlobalExceptionHandler.java</span>
+    <span class="file-role">Global Controller Advice</span>
+  </div>
+  <div class="file-desc">Annotated with <code>@RestControllerAdvice</code>. Intercepts validation errors (400), missing assets (404), rate limit violations (429), and uncaught exceptions (500).</div>
+  <div class="file-why"><strong>Why Needed:</strong> Centralizes error handling and masks internal SQL / driver details from unauthorized inspection.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/config/WebConfig.java</span>
+    <span class="file-role">CORS Security Configuration</span>
+  </div>
+  <div class="file-desc">Configures strict Cross-Origin Resource Sharing. Eliminates wildcard access and restricts origins to localhost and approved Vercel domains.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Enforces browser cross-origin boundaries and protects APIs from unauthorized foreign web apps.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/config/SecurityHeadersFilter.java</span>
+    <span class="file-role">OWASP Security Filter</span>
+  </div>
+  <div class="file-desc">Injects standard OWASP HTTP response headers: <code>X-Content-Type-Options: nosniff</code>, <code>X-Frame-Options: DENY</code>, <code>X-XSS-Protection</code>, and <code>Referrer-Policy</code>.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Mitigates clickjacking, MIME sniffing, and cross-site scripting attacks at the HTTP protocol layer.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/java/com/transynq/config/DataInitializer.java</span>
+    <span class="file-role">Database Seeder</span>
+  </div>
+  <div class="file-desc">Seeds initial assets TR-101 (Power Transformer), TR-202 (Distribution Transformer), and SG-301 (Switchgear Panel) if absent.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Guarantees zero-setup bootstrap on first launch with production-like asset definitions.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/resources/application.properties</span>
+    <span class="file-role">Development Configuration</span>
+  </div>
+  <div class="file-desc">Configures H2 in-memory database, port 8080, and development defaults.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Enables instant clone-and-run without requiring a local PostgreSQL or Docker setup.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main/resources/application-postgres.properties</span>
+    <span class="file-role">Production Configuration</span>
+  </div>
+  <div class="file-desc">Production profile using PostgreSQL dialect, connection pooling, and externalized cloud environment variables.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Connects to Render PostgreSQL instances in production with persistent storage.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/test/java/com/transynq/HealthEvaluationServiceTest.java</span>
+    <span class="file-role">Unit Test Suite</span>
+  </div>
+  <div class="file-desc">Validates boundary conditions, threshold transitions, and health scoring algorithms with 100% assertions passing.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Guarantees algorithmic correctness and prevents regression in diagnostic calculations.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/test/java/com/transynq/TransynqApplicationTests.java</span>
+    <span class="file-role">Integration Test Suite</span>
+  </div>
+  <div class="file-desc">Bootstraps full Spring application context, JPA repositories, and schema generation to ensure bean wiring sanity.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Verifies complete system startup health prior to deployment.</div>
+</div>
+
+<div class="page-break"></div>
+
+<h3>Frontend Architecture (React 19 / Vite / Tailwind CSS / Chart.js)</h3>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">frontend/index.html</span>
+    <span class="file-role">HTML Entry Shell</span>
+  </div>
+  <div class="file-desc">Single-page application HTML skeleton configuring viewport, SEO metadata, and mounting root.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Hosts official Transynq favicon and loads the React bundle.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/main.jsx</span>
+    <span class="file-role">Client Entry Point</span>
+  </div>
+  <div class="file-desc">Bootstraps React 19 root and wraps the application with <code>BrowserRouter</code>.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Activates client-side routing and connects React to the DOM.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/App.jsx</span>
+    <span class="file-role">Application Shell & Layout</span>
+  </div>
+  <div class="file-desc">Configures route hierarchy (<code>/</code>, <code>/history</code>, <code>/alerts</code>) wrapped in <code>AssetProvider</code> and persistent <code>Footer</code>.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Manages global view navigation and injects shared multi-asset state across pages.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/context/AssetContext.jsx</span>
+    <span class="file-role">Global State Management</span>
+  </div>
+  <div class="file-desc">React Context tracking the globally selected asset ID and catalog list fetched from <code>GET /api/assets</code>.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Ensures switching assets in the navbar instantly re-subscribes the Dashboard, History, and Alerts views.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/services/api.js</span>
+    <span class="file-role">HTTP & SSE Service Layer</span>
+  </div>
+  <div class="file-desc">Centralizes REST API calls and manages persistent <code>EventSource</code> SSE subscriptions with exponential reconnection.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Abstract backend communication and encapsulates error parsing and optional security headers.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/components/TopBar.jsx</span>
+    <span class="file-role">Header Navigation Bar</span>
+  </div>
+  <div class="file-desc">Sticky top bar displaying official Transynq branding, view tabs, asset selector dropdown, live SSE status pill, and clock.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Provides intuitive top-level navigation, instant equipment switching, and live connection status.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/components/TransformerHeroCard.jsx</span>
+    <span class="file-role">Hero Status Component</span>
+  </div>
+  <div class="file-desc">High-impact card displaying overall asset health score, active scenario, operating status, and dynamic animated status gradients.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Delivers instant situational awareness for substation operators at a glance.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/components/StatsCards.jsx</span>
+    <span class="file-role">Telemetry Metric Cards</span>
+  </div>
+  <div class="file-desc">Displays Top Oil Temp, Winding Temp, Load Factor, and Dissolved $H_2$ with normal/warning/critical status badges and thresholds.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Translates raw electrical metrics into clear visual indicators with baseline context.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/components/Charts.jsx</span>
+    <span class="file-role">Real-Time Visualization</span>
+  </div>
+  <div class="file-desc">Renders dual-line temperature chart (Oil vs Winding) and load trend line using Chart.js with a rolling 40-reading sliding window.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Provides visual thermal gradient analysis to spot dangerous heating slopes in real time.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/components/HealthGauge.jsx</span>
+    <span class="file-role">Radial Meter Component</span>
+  </div>
+  <div class="file-desc">Circular SVG health meter rendering the calculated 0–100 health score with smooth animation and qualitative categorization.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Summarizes multi-parameter asset condition into a single intuitive metric.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/components/ScenarioControls.jsx</span>
+    <span class="file-role">Operational Control Panel</span>
+  </div>
+  <div class="file-desc">Interactive button group letting operators trigger Normal, Overheating, and Gas Anomaly simulation states with loading states.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Demonstrates real-time digital twin fault response for testing and evaluation.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/components/AlertBanner.jsx</span>
+    <span class="file-role">Dynamic Anomaly Banner</span>
+  </div>
+  <div class="file-desc">Floating banner appearing on the Dashboard when unresolved alerts exist, highlighting parameter violations.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Alerts operators immediately to critical grid events without requiring navigation to the alerts tab.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/components/Footer.jsx</span>
+    <span class="file-role">Attribution & Repository Footer</span>
+  </div>
+  <div class="file-desc">Displays Transynq branding, candidate attribution (Built by Chitranshu Pandey), and GitHub repo link.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Professional submission closure and easy repository verification.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/pages/Dashboard.jsx</span>
+    <span class="file-role">Primary Monitoring View</span>
+  </div>
+  <div class="file-desc">Coordinates real-time digital twin monitoring by binding hero card, stats, live charts, gauge, and controls to the live SSE stream.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Serves as the central operational cockpit for substation digital twin management.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/pages/HistoryView.jsx</span>
+    <span class="file-role">Historical Audit View</span>
+  </div>
+  <div class="file-desc">Provides time-window filtering (15m, 1h, 24h), historical temperature and gas charts, and tabular telemetry logs.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Fulfills the requirement for retrospective review and post-fault investigation.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">src/pages/AlertsView.jsx</span>
+    <span class="file-role">Alert Audit Log View</span>
+  </div>
+  <div class="file-desc">Displays chronological alert transition logs with severity filtering (ALL, CRITICAL, WARNING), active counters, and resolution timestamps.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Fulfills the requirement for comprehensive alert tracking and operational accountability.</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">frontend/vite.config.js</span>
+    <span class="file-role">Build Tooling Configuration</span>
+  </div>
+  <div class="file-desc">Configures Vite development server reverse proxy forwarding <code>/api</code> calls to port 8080.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Enables zero-CORS local development between Vite (port 5173) and Spring Boot (port 8080).</div>
+</div>
+
+<div class="file-card">
+  <div class="file-header">
+    <span class="file-path">frontend/tailwind.config.js</span>
+    <span class="file-role">Design System Configuration</span>
+  </div>
+  <div class="file-desc">Extends Tailwind CSS theme with industrial electric blue palettes, custom glassmorphism, and responsive breakpoints.</div>
+  <div class="file-why"><strong>Why Needed:</strong> Enforces consistent typography, colors, and responsive layouts across all views.</div>
+</div>
+
+<div class="page-break"></div>
+
+<h2>3. Mathematical Formulation & Health Logic</h2>
+
+<h3>A. Thermal Inertia Drift Equations</h3>
+<p>
+  Under the <strong>NORMAL</strong> scenario, temperatures follow ambient damping toward nominal setpoints with physical inertia:
+</p>
+<pre>
+Oil_Temp(t+1) = Oil_Temp(t) + (60.0 - Oil_Temp(t)) * 0.12 + Random(-0.3, +0.3)
+Winding_Temp(t+1) = Oil_Temp(t+1) + 12.0 + Random(-0.6, +0.6)
+Load_Factor(t+1) = Load_Factor(t) + (68.0 - Load_Factor(t)) * 0.10 + Random(-0.75, +0.75)
+H2_Ppm(t+1) = H2_Ppm(t) + (30.0 - H2_Ppm(t)) * 0.12 + Random(-0.9, +0.9)
+</pre>
+<p>
+  Under the <strong>OVERHEATING</strong> scenario, thermal runaway is simulated by positive incremental steps:
+</p>
+<pre>
+Oil_Step = 1.0 + Random(0.0, 1.5) &rarr; (+1.0 to +2.5 °C / tick)
+Oil_Temp(t+1) = min(102.0, Oil_Temp(t) + Oil_Step)
+Winding_Gradient = 13.0 + Random(0.0, 3.0) &rarr; (+13 to +16 °C hot-spot rise)
+Winding_Temp(t+1) = min(118.0, Oil_Temp(t+1) + Winding_Gradient)
+</pre>
+
+<h3>B. Health Evaluation Thresholds (IEEE C57.104 / IEC 60076-7)</h3>
+<table class="data-table">
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Nominal Range</th>
+      <th>Warning Threshold</th>
+      <th>Critical Breach</th>
+      <th>Standard Reference</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Top Oil Temperature</td>
+      <td>&le; 75.0 °C</td>
+      <td>&gt; 75.0 °C</td>
+      <td>&gt; 85.0 °C</td>
+      <td>IEC 60076-7 Thermal Loading Guide</td>
+    </tr>
+    <tr>
+      <td>Hot-Spot Winding Temp</td>
+      <td>&le; 88.0 °C</td>
+      <td>&gt; 88.0 °C</td>
+      <td>&gt; 98.0 °C</td>
+      <td>IEEE C57.91 Insulation Degradation</td>
+    </tr>
+    <tr>
+      <td>Load Factor</td>
+      <td>&le; 85.0 %</td>
+      <td>&gt; 85.0 %</td>
+      <td>&gt; 95.0 %</td>
+      <td>Rated Substation Nameplate Limit</td>
+    </tr>
+    <tr>
+      <td>Dissolved Hydrogen ($H_2$)</td>
+      <td>&le; 100.0 ppm</td>
+      <td>&gt; 100.0 ppm</td>
+      <td>&gt; 200.0 ppm</td>
+      <td>IEEE C57.104 DGA Interpretation</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Health Score Formula:</strong></p>
+<pre>
+Health_Score = max(0, min(100, 100 - (10 * Count(WARNING)) - (25 * Count(CRITICAL))))
+</pre>
+
+<div class="page-break"></div>
+
+<h2>4. Ground Rules & Interview Walkthrough</h2>
+
+<h3>A. AI Usage Disclosure (Ground Rules Requirement)</h3>
+<ul>
+  <li><strong>Which parts AI produced:</strong> AI assisted with scaffolding repetitive boilerplate (Spring Boot JPA entities, repository interfaces, DTOs) and translating Tailwind styling structures.</li>
+  <li><strong>How code was verified:</strong> Verified via automated unit tests (<code>mvn test</code> — 5/5 passing), scripted PowerShell end-to-end API audits, raw SSE stream inspections, and OWASP security header validation.</li>
+  <li><strong>Where AI was overruled:</strong> AI initially proposed an overly complex distributed architecture using Apache Kafka, bi-directional WebSockets, and OAuth2 microservices. I overruled this because transformer telemetry is unidirectional (sensor to cloud), and adding external brokers introduces needless operational failure points. Instead, I mandated <strong>Server-Sent Events (SSE)</strong> with Spring <code>SseEmitter</code>, reducing external latency to zero and delivering native browser auto-reconnects. Furthermore, I overruled random jump simulation in favor of bounded thermal inertia equations.</li>
+</ul>
+
+<h3>B. The Decision Changed (Interview Walkthrough)</h3>
+<ul>
+  <li><strong>JPA Relationship FetchType (LAZY vs EAGER):</strong> Originally, <code>Reading.asset</code> and <code>Alert.asset</code> were declared with <code>FetchType.LAZY</code>. When serializing readings over asynchronous SSE threads outside the original database transaction, this triggered <code>LazyInitializationException</code>. I evaluated wrapping controller methods with <code>@Transactional(readOnly = true)</code> versus switching to <code>FetchType.EAGER</code>. I chose <code>FetchType.EAGER</code> because <code>Asset</code> is a small reference entity with only 6 scalar fields, completely eliminating lazy-loading failures and N+1 query overhead while ensuring thread-safe serialization across background SSE emitters.</li>
+</ul>
+
+<h3>C. Transition-Based Alerting</h3>
+<ul>
+  <li>Instead of firing database alert rows every 3 seconds during a fault (which would flood the database with thousands of duplicate rows per hour), the alert engine triggers only on <strong>state changes</strong> (<code>HEALTHY</code> &rarr; <code>WARNING</code> &rarr; <code>CRITICAL</code>) and sets a <code>resolvedAt</code> timestamp when conditions return to normal.</li>
+</ul>
+
+<hr style="border: 0; border-top: 1px solid #cbd5e1; margin-top: 30px;">
+<p style="text-align: center; font-size: 9pt; color: #64748b;">
+  Transynq Architectural Specification &bull; Prepared for Rugged Monitoring Take-Home Evaluation &bull; Chitranshu Pandey
+</p>
+
+</body>
+</html>

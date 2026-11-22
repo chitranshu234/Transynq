@@ -1,9 +1,12 @@
-# Transynq — Transformer Digital Twin
+# Transynq — Electrical Asset Digital Twin Monitoring System
 
-A simplified digital twin for electrical transformer monitoring, built by adapting an existing HerdWatch IoT dashboard. Demonstrates live asset health from simulated sensor data, alerts on health degradation, and reviewable history.
+A high-reliability digital twin monitoring platform for critical high-voltage electrical substation assets (Power Transformers, Distribution Transformers, and Medium-Voltage Switchgear Panels). Transynq demonstrates real-time asset health evaluation from continuous multi-sensor telemetry, deterministic threshold-based anomaly detection, historical trend analytics, and operational fault simulation.
 
-> **Selected Track:** Digital Twin for Electrical Assets  
-> **Stack:** React 19 + Vite + Tailwind CSS + Chart.js (frontend) | Java 17 + Spring Boot 3.4.1 + H2/PostgreSQL (backend)
+> **Track:** Track 1 — Digital Twin for Electrical Assets  
+> **Candidate:** Chitranshu Pandey  
+> **Target Role:** Rugged Monitoring Take-Home Assignment  
+> **Stack:** React 19 + Vite + Tailwind CSS + Chart.js (Frontend) \| Java 17 + Spring Boot 3.4.1 + H2 / PostgreSQL (Backend)  
+> **Repository:** [https://github.com/chitranshu234/Transynq](https://github.com/chitranshu234/Transynq)
 
 ---
 
@@ -120,23 +123,10 @@ On return to NORMAL: values gradually cool down / decrease.
 **Health score** = 100 − (10 × warning parameters) − (25 × critical parameters), clamped [0, 100].
 
 ### Alert Logic
-- Alerts fire on **status transitions** only (HEALTHY→WARNING, HEALTHY→CRITICAL, WARNING→CRITICAL)
-- No duplicate alerts generated every tick
-- Alerts auto-resolve when parameter returns to normal
-- Severity escalation (WARNING→CRITICAL) resolves old alert, creates new
-
-## HerdWatch → Transynq Adaptation
-
-| Original HerdWatch | Transynq Adaptation |
-|---------------------|---------------------|
-| `TopBar` (HerdWatch branding, Feeder/Cattle status) | Rebranded Transynq TopBar with navigation, SSE status, asset indicator |
-| `CattlePresenceCard` (green gradient hero card) | `TransformerHeroCard` (dynamic gradient by health status) |
-| `StatsCards` (6 farm metrics) | 4 transformer telemetry cards (oil, winding, load, H₂) |
-| `Charts` (food level, temperature bar, visit activity) | Dual-line temperature chart + load chart |
-| `FoodRefillAlert` (red banner) | `AlertBanner` (severity-colored anomaly alert) |
-| `FoodGauge` (circular SVG) | `HealthGauge` (health score 0-100 gauge) |
-| Firebase real-time DB | Spring Boot SSE + REST |
-| Single Dashboard page | 3-view routing (Dashboard, History, Alerts) |
+- Alerts fire on **status transitions** only (`HEALTHY` → `WARNING`, `HEALTHY` → `CRITICAL`, `WARNING` → `CRITICAL`)
+- No duplicate alerts generated on every tick during active faults
+- Alerts automatically resolve (`resolvedAt` timestamped) when readings recover below safety limits
+- Severity escalation automatically resolves prior warning and logs the elevated critical state
 
 ## Security & Hardening Architecture
 
@@ -224,8 +214,6 @@ Thresholds and monitoring concepts were informed by:
 - **IEEE C57.91-2011**: Guide for Loading Mineral-Oil-Immersed Transformers and Step-Voltage Regulators
 
 The specific numerical thresholds used in this project are **simplified educational values** chosen to demonstrate the monitoring concept clearly within a 3-second simulation cycle. Real transformer monitoring uses manufacturer-specific limits, historical trending, and multi-parameter dissolved gas analysis ratios.
-
-## Deployment
 
 ## Deployment Guide
 
