@@ -28,12 +28,21 @@ export async function fetchAlerts(assetId = 1) {
 }
 
 export async function setScenario(assetId = 1, scenario) {
+  const headers = { 'Content-Type': 'application/json' };
+  const apiKey = import.meta.env.VITE_SCENARIO_API_KEY;
+  if (apiKey) {
+    headers['X-API-KEY'] = apiKey;
+  }
+
   const res = await fetch(`${API_BASE}/api/assets/${assetId}/scenario`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers,
     body: JSON.stringify({ scenario }),
   });
-  if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+  if (!res.ok) {
+    const errData = await res.json().catch(() => null);
+    throw new Error(errData?.message || `HTTP error! status: ${res.status}`);
+  }
   return res.json();
 }
 
