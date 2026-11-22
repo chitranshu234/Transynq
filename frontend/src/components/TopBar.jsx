@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { FiZap, FiWifi, FiWifiOff, FiCpu, FiChevronDown } from "react-icons/fi";
+import { FiWifi, FiWifiOff, FiCpu, FiChevronDown } from "react-icons/fi";
 import { useAsset } from "../context/AssetContext";
 
 export default function TopBar({ connectionStatus = "connected" }) {
@@ -30,24 +30,18 @@ export default function TopBar({ connectionStatus = "connected" }) {
   return (
     <header className="px-6 py-3 border-b border-blue-100/60 bg-white/70 backdrop-blur-md sticky top-0 z-30 mb-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-        {/* Left — Brand */}
+        {/* Left — Official Brand Logo */}
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center shadow-sm shadow-blue-500/20 text-white flex-shrink-0">
-            <FiZap className="text-lg" />
-          </div>
-          <div className="flex flex-col">
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-blue-700 via-cyan-600 to-teal-600 bg-clip-text text-transparent leading-none">
-                Transynq
-              </span>
-              <span className="text-[10px] font-semibold tracking-wider uppercase px-2 py-0.5 rounded-md bg-blue-50 text-blue-600 border border-blue-200/70 leading-none">
-                Digital Twin
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400 font-medium tracking-tight mt-1 leading-none">
-              Electrical Asset Telemetry & Predictive Health
-            </p>
-          </div>
+          <NavLink to="/" className="flex items-center gap-2.5">
+            <img
+              src="/transynq-logo.png"
+              alt="Transynq Digital Twin"
+              className="h-8 md:h-8.5 w-auto object-contain"
+            />
+          </NavLink>
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 border border-teal-200/80">
+            Digital Twin
+          </span>
         </div>
 
         {/* Center — Navigation Tabs */}
