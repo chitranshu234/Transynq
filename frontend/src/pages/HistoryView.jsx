@@ -1,18 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import TopBar from "../components/TopBar";
 import { fetchHistory } from "../services/api";
+import { useAsset } from "../context/AssetContext";
 import { Line } from "react-chartjs-2";
 import { FiRefreshCw } from "react-icons/fi";
 
 export default function HistoryView() {
+  const { selectedAssetId: assetId, selectedAsset } = useAsset();
   const [selectedMinutes, setSelectedMinutes] = useState(60);
   const [readings, setReadings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const assetId = 1;
-
-  const loadHistoryData = async (minutes) => {
+  const loadHistoryData = useCallback(async (minutes) => {
     setLoading(true);
     setError(null);
     try {
@@ -24,10 +24,11 @@ export default function HistoryView() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [assetId]);
 
   useEffect(() => {
     loadHistoryData(selectedMinutes);
+  }, [selectedMinutes, loadHistoryData]);
   }, [selectedMinutes]);
 
   const ranges = [
@@ -192,7 +193,7 @@ export default function HistoryView() {
               </p>
             </div>
             <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
-              TR-101
+              {selectedAsset?.code || "TR-101"}
             </span>
           </div>
 
