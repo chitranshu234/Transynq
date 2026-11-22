@@ -43,39 +43,38 @@ export default function AlertsView() {
       <TopBar connectionStatus="connected" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6 pb-12">
-        {/* Command Center Header */}
-        <div className="bg-slate-900/70 backdrop-blur-xl rounded-2xl px-6 py-5 border border-white/[0.06] shadow-xl">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                Alerts Log
-              </h2>
-              <p className="text-sm text-slate-400 mt-0.5">
-                Deterministic state-change alerts for thermal limits and dissolved gas buildup.
-              </p>
-            </div>
+        {/* Header & Stats summary */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/70 backdrop-blur-md p-5 rounded-3xl border border-blue-100 shadow-sm">
+          <div>
+            <h2 className="text-xl font-black text-slate-800 tracking-tight">
+              Asset Alerts & Transition History
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Deterministic state-change alerts for thermal limits and dissolved gas buildup
+            </p>
+          </div>
 
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <div className="flex items-center gap-2 bg-white/[0.06] px-3 py-1.5 rounded-lg border border-white/[0.05] text-xs font-bold text-cyan-300">
-                {activeCount} Active
-              </div>
-              <div className="flex items-center gap-1.5 bg-red-500/10 px-3 py-1.5 rounded-lg border border-red-500/20 text-xs font-bold text-red-400">
-                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                {criticalCount} Critical
-              </div>
-              <div className="flex items-center gap-1.5 bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20 text-xs font-bold text-amber-400">
-                <span className="w-2 h-2 rounded-full bg-amber-500" />
-                {warningCount} Warning
-              </div>
-              <button
-                onClick={loadAlertsData}
-                disabled={loading}
-                className="p-2.5 rounded-lg bg-white/[0.06] border border-white/[0.05] text-slate-400 hover:text-white hover:bg-white/[0.1] transition-all cursor-pointer"
-                title="Refresh Alerts"
-              >
-                <FiRefreshCw className={`text-sm ${loading ? "animate-spin" : ""}`} />
-              </button>
+          {/* Quick Metrics */}
+          <div className="flex items-center gap-3">
+            <div className="px-3.5 py-1.5 rounded-2xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold flex items-center gap-1.5">
+              <span>{activeCount} Active</span>
             </div>
+            <div className="px-3.5 py-1.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-bold flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span>{criticalCount} Critical</span>
+            </div>
+            <div className="px-3.5 py-1.5 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 text-xs font-bold flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-500" />
+              <span>{warningCount} Warning</span>
+            </div>
+            <button
+              onClick={loadAlertsData}
+              disabled={loading}
+              className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-blue-600 transition-all cursor-pointer"
+              title="Refresh Alerts"
+            >
+              <FiRefreshCw className={`text-sm ${loading ? "animate-spin" : ""}`} />
+            </button>
           </div>
         </div>
 

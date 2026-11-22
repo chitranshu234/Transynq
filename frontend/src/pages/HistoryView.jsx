@@ -114,45 +114,44 @@ export default function HistoryView() {
       <TopBar connectionStatus="connected" />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6 pb-12">
-        {/* Command Center Header */}
-        <div className="bg-slate-900/70 backdrop-blur-xl rounded-2xl px-6 py-5 border border-white/[0.06] shadow-xl">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
-                History & Trends
-              </h2>
-              <p className="text-sm text-slate-400 mt-0.5">
-                Review sensor trends, thermal excursion limits, and recorded readings.
-              </p>
+        {/* Title & Controls Bar */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white/70 backdrop-blur-md p-5 rounded-3xl border border-blue-100 shadow-sm">
+          <div>
+            <h2 className="text-xl font-black text-slate-800 tracking-tight">
+              Historical Telemetry & Audit Logs
+            </h2>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Review sensor trends, thermal excursion limits, and recorded readings
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Time range buttons */}
+            <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200">
+              {ranges.map((r) => (
+                <button
+                  key={r.minutes}
+                  onClick={() => setSelectedMinutes(r.minutes)}
+                  className={`px-4 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                    selectedMinutes === r.minutes
+                      ? "bg-blue-600 text-white shadow-sm"
+                      : "text-slate-600 hover:text-blue-700"
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
             </div>
 
-            <div className="flex items-center gap-2 flex-wrap">
-              {/* Time range pills */}
-              <div className="flex items-center gap-1 bg-white/[0.06] p-1 rounded-xl border border-white/[0.05]">
-                {ranges.map((r) => (
-                  <button
-                    key={r.minutes}
-                    onClick={() => setSelectedMinutes(r.minutes)}
-                    className={`px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
-                      selectedMinutes === r.minutes
-                        ? "bg-white/[0.15] text-white border border-white/10"
-                        : "text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent"
-                    }`}
-                  >
-                    {r.label}
-                  </button>
-                ))}
-              </div>
-
-              <button
-                onClick={() => loadHistoryData(selectedMinutes)}
-                disabled={loading}
-                className="p-2.5 rounded-lg bg-white/[0.06] border border-white/[0.05] text-slate-400 hover:text-white hover:bg-white/[0.1] transition-all cursor-pointer"
-                title="Refresh History"
-              >
-                <FiRefreshCw className={`text-sm ${loading ? "animate-spin" : ""}`} />
-              </button>
-            </div>
+            {/* Refresh button */}
+            <button
+              onClick={() => loadHistoryData(selectedMinutes)}
+              disabled={loading}
+              className="p-2.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 transition-all cursor-pointer"
+              title="Refresh History"
+            >
+              <FiRefreshCw className={`text-sm ${loading ? "animate-spin" : ""}`} />
+            </button>
           </div>
         </div>
 
