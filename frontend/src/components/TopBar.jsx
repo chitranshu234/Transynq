@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { FiZap, FiWifi, FiWifiOff, FiCpu } from "react-icons/fi";
+import { FiZap, FiWifi, FiWifiOff, FiCpu, FiChevronDown } from "react-icons/fi";
+import { useAsset } from "../context/AssetContext";
 
 export default function TopBar({ connectionStatus = "connected" }) {
+  const { assets, selectedAssetId, setSelectedAssetId } = useAsset();
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -91,10 +93,22 @@ export default function TopBar({ connectionStatus = "connected" }) {
 
         {/* Right — System Status & Clock */}
         <div className="flex items-center gap-3 flex-wrap justify-center">
-          {/* Active Asset Pill */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 text-xs font-semibold border border-slate-200">
-            <FiCpu className="text-blue-600 text-sm" />
-            <span>TR-101 (Main Substation)</span>
+          {/* Asset Selector */}
+          <div className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100/90 hover:bg-slate-200/80 transition-colors text-slate-700 text-xs font-semibold border border-slate-200 shadow-inner">
+            <FiCpu className="text-blue-600 text-sm flex-shrink-0" />
+            <select
+              value={selectedAssetId}
+              onChange={(e) => setSelectedAssetId(Number(e.target.value))}
+              className="bg-transparent text-slate-800 text-xs font-bold outline-none cursor-pointer pr-4 appearance-none"
+              title="Select Asset to Monitor"
+            >
+              {assets.map((asset) => (
+                <option key={asset.id} value={asset.id} className="text-slate-800 bg-white">
+                  {asset.code} ({asset.location?.split(",")[0] || asset.name})
+                </option>
+              ))}
+            </select>
+            <FiChevronDown className="absolute right-2.5 text-slate-400 text-xs pointer-events-none" />
           </div>
 
           {/* SSE Stream Status */}
