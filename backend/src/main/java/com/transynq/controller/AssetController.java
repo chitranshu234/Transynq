@@ -5,6 +5,8 @@ import com.transynq.dto.ScenarioRequest;
 import com.transynq.entity.Asset;
 import com.transynq.repository.AssetRepository;
 import com.transynq.repository.ReadingRepository;
+import com.transynq.service.ScenarioSecurityService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
@@ -22,10 +24,14 @@ public class AssetController {
 
     private final AssetRepository assetRepository;
     private final ReadingRepository readingRepository;
+    private final ScenarioSecurityService scenarioSecurityService;
 
-    public AssetController(AssetRepository assetRepository, ReadingRepository readingRepository) {
+    public AssetController(AssetRepository assetRepository,
+                           ReadingRepository readingRepository,
+                           ScenarioSecurityService scenarioSecurityService) {
         this.assetRepository = assetRepository;
         this.readingRepository = readingRepository;
+        this.scenarioSecurityService = scenarioSecurityService;
     }
 
     @GetMapping
@@ -55,7 +61,10 @@ public class AssetController {
     @PostMapping("/{id}/scenario")
     public ResponseEntity<Asset> updateScenario(
             @PathVariable @Positive(message = "Asset ID must be positive") Long id,
-            @Valid @RequestBody ScenarioRequest request) {
+            @Valid @RequestBody ScenarioRequest request,
+            HttpServletRequest httpRequest) {
+        scenarioSecurityService.validateScenarioAccess(httpRequest);
+
         Asset asset = assetRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Asset not found: " + id));
 
