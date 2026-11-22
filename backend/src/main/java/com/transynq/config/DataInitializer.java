@@ -16,17 +16,19 @@ public class DataInitializer {
     @Bean
     public CommandLineRunner initDatabase(AssetRepository assetRepository) {
         return args -> {
-            if (!assetRepository.existsByCode("TR-101")) {
-                Asset tr101 = new Asset(
-                        "TR-101",
-                        "Substation A - Main Power Transformer (100 MVA)",
-                        "Substation A, Bay 3",
-                        "NORMAL",
-                        "HEALTHY"
-                );
-                assetRepository.save(tr101);
-                log.info("Seeded primary asset TR-101 successfully.");
-            }
+            seedIfMissing(assetRepository, "TR-101",
+                    "Main Power Transformer (100 MVA)", "Substation A, Bay 3");
+            seedIfMissing(assetRepository, "TR-202",
+                    "Distribution Transformer (25 MVA)", "Substation B, Bay 1");
+            seedIfMissing(assetRepository, "SG-301",
+                    "11 kV Switchgear Panel", "Substation A, Bay 7");
         };
+    }
+
+    private void seedIfMissing(AssetRepository repo, String code, String name, String location) {
+        if (!repo.existsByCode(code)) {
+            repo.save(new Asset(code, name, location, "NORMAL", "HEALTHY"));
+            log.info("Seeded asset {} successfully.", code);
+        }
     }
 }
