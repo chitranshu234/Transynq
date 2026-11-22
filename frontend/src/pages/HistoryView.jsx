@@ -29,7 +29,6 @@ export default function HistoryView() {
   useEffect(() => {
     loadHistoryData(selectedMinutes);
   }, [selectedMinutes, loadHistoryData]);
-  }, [selectedMinutes]);
 
   const ranges = [
     { label: "15 Minutes", minutes: 15 },
