@@ -17,7 +17,8 @@ backend/target/
 .DS_Store
 Thumbs.db
 
-# Environment
+# Environment & local docs
 .env
 .env.local
 *.log
+*.pdf
