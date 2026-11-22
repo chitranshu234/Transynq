@@ -6,6 +6,7 @@ import Charts from "../components/Charts";
 import AlertBanner from "../components/AlertBanner";
 import HealthGauge from "../components/HealthGauge";
 import ScenarioControls from "../components/ScenarioControls";
+import { useAsset } from "../context/AssetContext";
 import {
   fetchLatestReading,
   fetchAlerts,
@@ -35,7 +36,7 @@ export default function Dashboard() {
   const [scenario, setScenario] = useState("NORMAL");
   const [loadingScenario, setLoadingScenario] = useState(false);
 
-  const assetId = 1;
+  const { selectedAssetId: assetId, selectedAsset } = useAsset();
 
   // Fetch unresolved alerts
   const refreshAlerts = useCallback(async () => {
