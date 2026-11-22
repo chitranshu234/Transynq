@@ -138,6 +138,21 @@ On return to NORMAL: values gradually cool down / decrease.
 | Firebase real-time DB | Spring Boot SSE + REST |
 | Single Dashboard page | 3-view routing (Dashboard, History, Alerts) |
 
+## Security & Hardening Architecture
+
+Transynq implements a defense-in-depth security model designed for electrical operational technology (OT) monitoring systems:
+
+| Security Feature | Priority | Implementation & Protection Mechanism |
+|---|:---:|---|
+| **Input Validation** | 🔴 Must have | Strict Jakarta validation (`@Valid`, `@Pattern`, `@Positive`, `@Min`, `@Max`) on all controller parameters and request DTOs. Blocks malformed payload injections and invalid scenario states. |
+| **CORS Restriction** | 🔴 Must have | Configured via `transynq.cors.allowed-origins` (`CORS_ALLOWED_ORIGINS` env var). Stripped wildcard `*` access; only explicitly approved frontend origins (e.g. Vercel deployment and local dev) can make cross-origin API calls. |
+| **Environment Variables** | 🔴 Must have | All sensitive credentials (`DATABASE_URL`, `DB_USERNAME`, `DB_PASSWORD`, `SCENARIO_API_KEY`) are externalized via environment variables. Zero hardcoded secrets in source control. |
+| **Global Exception Handling** | 🔴 Must have | `@RestControllerAdvice` captures all exceptions (`MethodArgumentNotValidException`, `ConstraintViolationException`, `ResponseStatusException`, etc.) and returns structured, sanitized `ErrorResponse` JSON. Internal stack traces and SQL dialect details are suppressed (`server.error.include-stacktrace=never`). |
+| **HTTPS & Reverse Proxy** | 🔴 Must have (Prod) | Production TLS termination handled by cloud reverse proxy (Render/Vercel). Configured with `server.forward-headers-strategy=native` to honor `X-Forwarded-Proto: https`. |
+| **OWASP Security Headers** | 🔴 Must have | `SecurityHeadersFilter` automatically injects `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection: 1; mode=block`, and strict `Referrer-Policy` on every response. |
+| **API Authentication for Controls** | 🟡 Recommended | `ScenarioSecurityService` enforces `X-API-KEY` or `Bearer` token verification on `POST /api/assets/{id}/scenario` when `SCENARIO_API_KEY` is configured. Prevents unauthorized operators from manipulating grid simulations. |
+| **Rate Limiting** | 🟡 Optional | Sliding-window in-memory rate limiter on `POST /api/assets/{id}/scenario` caps mutation requests to 10 requests / 10 seconds per IP, returning `429 Too Many Requests` on abuse. |
+
 ## Design Decisions
 
 1. **Server-side simulation over frontend random values:** Multiple browser tabs see the same consistent state; readings persist across page refreshes; history is real.
