@@ -169,26 +169,52 @@ Transynq implements a defense-in-depth security model designed for electrical op
 ## Project Structure
 ```
 transynq/
-├── frontend/           # React + Vite + Tailwind CSS
+├── frontend/               # React 19 + Vite + Tailwind CSS
 │   ├── src/
-│   │   ├── components/ # TopBar, TransformerHeroCard, StatsCards, Charts,
-│   │   │               # AlertBanner, HealthGauge, ScenarioControls
-│   │   ├── pages/      # Dashboard, HistoryView, AlertsView
-│   │   ├── services/   # api.js (REST + SSE client)
-│   │   └── App.jsx     # Router
+│   │   ├── components/     # TopBar, TransformerHeroCard, StatsCards, Charts,
+│   │   │                   # AlertBanner, HealthGauge, ScenarioControls
+│   │   ├── context/        # AssetContext.jsx (global multi-asset state)
+│   │   ├── pages/          # Dashboard, HistoryView, AlertsView
+│   │   ├── services/       # api.js (REST + SSE client with security headers)
+│   │   └── App.jsx         # Router & Context Provider
 │   └── package.json
-├── backend/            # Java Spring Boot
+├── backend/                # Java 17 + Spring Boot 3.4.1
 │   ├── src/main/java/com/transynq/
-│   │   ├── entity/     # Asset, Reading, Alert
-│   │   ├── repository/ # JPA repositories
-│   │   ├── service/    # SimulationService, HealthEvaluationService,
-│   │   │               # AlertService, SseStreamService
-│   │   ├── controller/ # AssetController, HistoryController, StreamController
-│   │   ├── dto/        # ReadingDto, ScenarioRequest
-│   │   └── config/     # WebConfig, DataInitializer
+│   │   ├── entity/         # Asset, Reading, Alert (indexed JPA entities)
+│   │   ├── repository/     # AssetRepository, ReadingRepository, AlertRepository
+│   │   ├── service/        # SimulationService, HealthEvaluationService,
+│   │   │                   # AlertService, SseStreamService, ScenarioSecurityService
+│   │   ├── controller/     # AssetController, HistoryController, StreamController
+│   │   ├── dto/            # ReadingDto, ScenarioRequest, ErrorResponse
+│   │   ├── exception/      # GlobalExceptionHandler (@RestControllerAdvice)
+│   │   └── config/         # WebConfig (CORS), DataInitializer, SecurityHeadersFilter
+│   ├── src/main/resources/
+│   │   ├── application.properties          # Dev profile (H2, auto-seeded)
+│   │   └── application-postgres.properties # Production profile (PostgreSQL)
 │   └── pom.xml
 └── README.md
 ```
+
+## AI Usage Note (Submission Requirement)
+
+In compliance with the take-home submission ground rules:
+
+- **What AI tools were used:** Assisted by agentic AI (Antigravity with Google DeepMind models) for scaffolding repetitive boilerplate, Spring Boot JPA repository setups, and CSS layout adaptation.
+- **How the code was verified:**
+  1. **Automated Test Suite:** Executed `mvn test` verifying 5/5 unit and integration tests covering threshold boundaries, multi-parameter scoring, and Spring application context bootstrapping.
+  2. **End-to-End API Audit:** Scripted PowerShell verification for all REST endpoints (`/api/assets`, `/latest`, `/history`, `/alerts`, `/scenario`) across all 3 seeded assets.
+  3. **Live SSE Stream Inspection:** Verified raw `text/event-stream` chunks delivered every 3 seconds with bounded physics drift.
+  4. **Security Verification:** Tested invalid scenario payloads (`400 Bad Request`), missing IDs (`404 Not Found`), and OWASP response headers (`X-Frame-Options`, `X-Content-Type-Options`).
+- **One place where AI was overruled:**
+  - **Overruled Architecture Complexity:** AI initially proposed a heavy event-driven architecture using Apache Kafka and bi-directional WebSockets with full Spring Security OAuth2. I overruled this design because transformer telemetry is unidirectional (device-to-cloud), and over-engineering distributed message brokers introduces unnecessary operational failure points. Instead, I mandated **Server-Sent Events (SSE)** with Spring `SseEmitter` and a dedicated `ScenarioSecurityService`. This reduced token overhead, zeroed external broker latency, eliminated dependency bloat, and ensured 100% reliable auto-reconnects in the browser.
+  - **Overruled Random Jumps for Thermal Physics:** When AI first drafted the simulation tick, it used unconstrained random numbers. I overruled this with a **bounded thermal inertia equation** where oil and winding temperatures drift smoothly and follow ambient lag, mimicking real thermodynamic behavior.
+
+## Key Decisions & Interview Talking Points
+
+During the technical interview walkthrough:
+1. **Decision Changed — FetchType LAZY vs EAGER:** Originally, JPA entity relationships (`Reading.asset` and `Alert.asset`) were marked `FetchType.LAZY`. When streaming DTOs over SSE outside a transactional boundary, this triggered `LazyInitializationException`. I evaluated `@Transactional(readOnly = true)` on controller vs `FetchType.EAGER`. I chose `FetchType.EAGER` because `Asset` is a small reference entity with only 6 scalar fields, completely eliminating N+1 overhead while guaranteeing thread-safe serialization for async SSE workers.
+2. **Transition-Based Alerting:** Rather than firing an alert record on every 3-second simulation tick during a fault (which would flood the database with thousands of duplicate rows per hour), the alert service triggers only on **state transitions** (e.g. `HEALTHY` → `WARNING` or `WARNING` → `CRITICAL`). When normal conditions resume, the open alert is timestamped with `resolvedAt`.
+3. **Multi-Asset Scalability:** The backend simulation loop dynamically iterates `assetRepository.findAll()`. Adding new switchgears, generators, or transformers requires no changes to the simulation engine or frontend routing.
 
 ## Research Note
 
@@ -201,16 +227,45 @@ The specific numerical thresholds used in this project are **simplified educatio
 
 ## Deployment
 
-### Frontend (Vercel)
-```bash
-cd frontend
-npm run build
-# Deploy the dist/ folder to Vercel
-```
+## Deployment Guide
 
-### Backend (Render)
-1. Create a PostgreSQL database on Render
-2. Set environment variable: `SPRING_PROFILES_ACTIVE=postgres`
-3. Configure `application-postgres.properties` with Render database URL
-4. Deploy as a Web Service with build command: `cd backend && mvn clean package -DskipTests`
-5. Start command: `java -jar target/transynq-backend-0.0.1-SNAPSHOT.jar`
+### 1. Backend + PostgreSQL on Render
+
+#### Step A: Create PostgreSQL Database
+1. Go to [Render Dashboard](https://dashboard.render.com/) → **New +** → **PostgreSQL**.
+2. Name: `transynq-db`, choose the **Free** tier.
+3. From the database dashboard, copy the **Internal Database URL** (e.g., `postgres://user:password@dpg-xxx:5432/transynq_db`).
+
+#### Step B: Create Web Service for Spring Boot
+1. Click **New +** → **Web Service** → Connect your GitHub repo (`chitranshu234/Transynq`).
+2. Configure settings:
+   - **Root Directory:** `backend`
+   - **Runtime:** `Java` (Java 17+)
+   - **Build Command:** `mvn clean package -DskipTests`
+   - **Start Command:** `java -jar target/transynq-backend-0.0.1-SNAPSHOT.jar`
+3. Add **Environment Variables**:
+   | Variable | Value | Notes |
+   |---|---|---|
+   | `SPRING_PROFILES_ACTIVE` | `postgres` | Activates PostgreSQL datasource profile |
+   | `DATABASE_URL` | `jdbc:postgresql://<host>:5432/<dbname>` | Prefix with `jdbc:` from Render PG dashboard |
+   | `DB_USERNAME` | *(from Render PG dashboard)* | Database user |
+   | `DB_PASSWORD` | *(from Render PG dashboard)* | Database password |
+   | `CORS_ALLOWED_ORIGINS` | `https://your-frontend.vercel.app` | Frontend production origin |
+   | `SCENARIO_API_KEY` | *(optional strong secret)* | If set, secures scenario mutation endpoint |
+
+---
+
+### 2. Frontend on Vercel
+
+1. Import GitHub repository into [Vercel](https://vercel.com/).
+2. Configure project build settings:
+   - **Root Directory:** `frontend`
+   - **Framework Preset:** `Vite`
+   - **Build Command:** `npm run build`
+   - **Output Directory:** `dist`
+3. Add **Environment Variable**:
+   | Variable | Value |
+   |---|---|
+   | `VITE_API_BASE` | `https://your-backend.onrender.com` |
+   | `VITE_SCENARIO_API_KEY` | *(matches SCENARIO_API_KEY if configured)* |
+4. Click **Deploy**. Vercel will build the React bundle and deploy it globally on edge CDN with automatic HTTPS.
