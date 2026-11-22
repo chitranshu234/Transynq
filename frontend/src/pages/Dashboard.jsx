@@ -127,6 +127,26 @@ export default function Dashboard() {
       <TopBar connectionStatus={connectionStatus} />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 space-y-5 pb-12">
+        {/* Command Center Header */}
+        <div className="bg-slate-900/70 backdrop-blur-xl rounded-2xl px-6 py-5 border border-white/[0.06] shadow-xl">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+                Command Center
+              </h2>
+              <p className="text-sm text-slate-400 mt-0.5">
+                Real-time telemetry, health analytics, and what needs your attention.
+              </p>
+            </div>
+            <ScenarioControls
+              activeScenario={scenario}
+              onScenarioChange={handleScenarioChange}
+              loading={loadingScenario}
+              compact
+            />
+          </div>
+        </div>
+
         {/* Dynamic Anomaly Alert Banner */}
         {activeAlert && <AlertBanner alert={activeAlert} />}
 
