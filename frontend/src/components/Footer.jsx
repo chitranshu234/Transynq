@@ -21,7 +21,7 @@ export default function Footer() {
         {/* Right: User Attribution requested */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 text-slate-700 font-semibold border border-slate-200/80 shadow-sm">
-            <span>Built by <strong className="text-blue-700">Chitranshu Pandey</strong> × Rugged Monitoring</span>
+            <span>Built by <strong className="text-blue-700">Chitranshu Pandey</strong></span>
           </div>
           <a
             href="https://github.com/chitranshu234/Transynq"
