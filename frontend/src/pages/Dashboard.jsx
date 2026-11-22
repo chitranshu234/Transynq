@@ -170,7 +170,7 @@ export default function Dashboard() {
         {/* Row 2: Live Charts (Thermal & Load) */}
         <Charts readings={readingsBuffer} />
 
-        {/* Row 3: Health Gauge + Scenario Controls */}
+        {/* Row 3: Health Gauge */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           <div className="lg:col-span-4">
             <HealthGauge
