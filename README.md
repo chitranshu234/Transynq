@@ -128,20 +128,17 @@ On return to NORMAL: values gradually cool down / decrease.
 - Alerts automatically resolve (`resolvedAt` timestamped) when readings recover below safety limits
 - Severity escalation automatically resolves prior warning and logs the elevated critical state
 
-## Security & Hardening Architecture
+## Security Measures Applied
 
-Transynq implements a defense-in-depth security model designed for electrical operational technology (OT) monitoring systems:
+Transynq applies defense-in-depth security controls across the application stack:
 
-| Security Feature | Priority | Implementation & Protection Mechanism |
-|---|:---:|---|
-| **Input Validation** | 🔴 Must have | Strict Jakarta validation (`@Valid`, `@Pattern`, `@Positive`, `@Min`, `@Max`) on all controller parameters and request DTOs. Blocks malformed payload injections and invalid scenario states. |
-| **CORS Restriction** | 🔴 Must have | Configured via `transynq.cors.allowed-origins` (`CORS_ALLOWED_ORIGINS` env var). Stripped wildcard `*` access; only explicitly approved frontend origins (e.g. Vercel deployment and local dev) can make cross-origin API calls. |
-| **Environment Variables** | 🔴 Must have | All sensitive credentials (`DATABASE_URL`, `DB_USERNAME`, `DB_PASSWORD`, `SCENARIO_API_KEY`) are externalized via environment variables. Zero hardcoded secrets in source control. |
-| **Global Exception Handling** | 🔴 Must have | `@RestControllerAdvice` captures all exceptions (`MethodArgumentNotValidException`, `ConstraintViolationException`, `ResponseStatusException`, etc.) and returns structured, sanitized `ErrorResponse` JSON. Internal stack traces and SQL dialect details are suppressed (`server.error.include-stacktrace=never`). |
-| **HTTPS & Reverse Proxy** | 🔴 Must have (Prod) | Production TLS termination handled by cloud reverse proxy (Render/Vercel). Configured with `server.forward-headers-strategy=native` to honor `X-Forwarded-Proto: https`. |
-| **OWASP Security Headers** | 🔴 Must have | `SecurityHeadersFilter` automatically injects `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection: 1; mode=block`, and strict `Referrer-Policy` on every response. |
-| **API Authentication for Controls** | 🟡 Recommended | `ScenarioSecurityService` enforces `X-API-KEY` or `Bearer` token verification on `POST /api/assets/{id}/scenario` when `SCENARIO_API_KEY` is configured. Prevents unauthorized operators from manipulating grid simulations. |
-| **Rate Limiting** | 🟡 Optional | Sliding-window in-memory rate limiter on `POST /api/assets/{id}/scenario` caps mutation requests to 10 requests / 10 seconds per IP, returning `429 Too Many Requests` on abuse. |
+- **Input Validation:** Strict Jakarta Bean Validation (`@Valid`, `@Pattern`, `@Positive`, `@Min`, `@Max`) enforces payload schemas and validates request parameters, rejecting malformed scenario states with HTTP 400.
+- **Restricted CORS Policy:** Cross-Origin Resource Sharing is locked down to approved origins (`localhost:5173`, `localhost:3000`, and authorized Vercel production domains). Wildcard `*` origins are disallowed.
+- **OWASP Security Headers:** The `SecurityHeadersFilter` automatically attaches defensive HTTP headers to all responses (`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection: 1; mode=block`, and strict `Referrer-Policy`).
+- **Sanitized Global Error Handling:** The `@RestControllerAdvice` (`GlobalExceptionHandler`) intercepts all runtime exceptions, returning standardized `ErrorResponse` objects while completely suppressing database dialects, internal file paths, and Java stack traces (`server.error.include-stacktrace=never`).
+- **Environment-Driven Secrets:** All credentials (`DATABASE_URL`, `DB_USERNAME`, `DB_PASSWORD`, `SCENARIO_API_KEY`) are managed through environment variables with zero hardcoded credentials in source control.
+- **API Authentication & Rate Limiting:** Operational simulation controls (`POST /api/assets/{id}/scenario`) support optional `X-API-KEY` / `Bearer` token verification and an in-memory sliding-window rate limiter (10 requests / 10s per client IP) to prevent denial-of-service abuse.
+- **Reverse Proxy Header Support:** Configured with `server.forward-headers-strategy=native` to securely honor upstream TLS termination (`X-Forwarded-Proto: https`) on cloud hosting platforms.
 
 ## Design Decisions
 
