@@ -1,4 +1,4 @@
-const API_BASE = '';
+const API_BASE = import.meta.env.VITE_API_BASE || '';
 
 export async function fetchAssets() {
   const res = await fetch(`${API_BASE}/api/assets`);
@@ -51,6 +51,17 @@ export function subscribeToStream(assetId = 1, onMessage, onError, onOpen) {
         onOpen?.();
       };
 
+      // Listen for named 'reading' events from backend
+      es.addEventListener('reading', (e) => {
+        try {
+          const data = JSON.parse(e.data);
+          onMessage(data);
+        } catch (err) {
+          console.error('SSE parse error:', err, e.data);
+        }
+      });
+
+      // Also handle generic message events as fallback
       es.onmessage = (e) => {
         try {
           const data = JSON.parse(e.data);
