@@ -3,12 +3,13 @@ package com.transynq.controller;
 import com.transynq.dto.ReadingDto;
 import com.transynq.dto.ScenarioRequest;
 import com.transynq.entity.Asset;
-import com.transynq.entity.Reading;
 import com.transynq.repository.AssetRepository;
 import com.transynq.repository.ReadingRepository;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -16,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/assets")
+@Validated
 public class AssetController {
 
     private final AssetRepository assetRepository;
@@ -32,14 +34,14 @@ public class AssetController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Asset> getAsset(@PathVariable Long id) {
+    public ResponseEntity<Asset> getAsset(@PathVariable @Positive(message = "Asset ID must be positive") Long id) {
         return assetRepository.findById(id)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Asset not found: " + id));
     }
 
     @GetMapping("/{id}/latest")
-    public ResponseEntity<ReadingDto> getLatestReading(@PathVariable Long id) {
+    public ResponseEntity<ReadingDto> getLatestReading(@PathVariable @Positive(message = "Asset ID must be positive") Long id) {
         if (!assetRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Asset not found: " + id);
         }
@@ -51,15 +53,13 @@ public class AssetController {
     }
 
     @PostMapping("/{id}/scenario")
-    public ResponseEntity<Asset> updateScenario(@PathVariable Long id, @Valid @RequestBody ScenarioRequest request) {
+    public ResponseEntity<Asset> updateScenario(
+            @PathVariable @Positive(message = "Asset ID must be positive") Long id,
+            @Valid @RequestBody ScenarioRequest request) {
         Asset asset = assetRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Asset not found: " + id));
 
         String scenario = request.getScenario().toUpperCase();
-        if (!List.of("NORMAL", "OVERHEATING", "GAS_ANOMALY").contains(scenario)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid scenario. Must be NORMAL, OVERHEATING, or GAS_ANOMALY");
-        }
-
         asset.setScenario(scenario);
         Asset saved = assetRepository.save(asset);
         return ResponseEntity.ok(saved);

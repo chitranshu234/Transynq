@@ -6,7 +6,11 @@ import com.transynq.entity.Reading;
 import com.transynq.repository.AlertRepository;
 import com.transynq.repository.AssetRepository;
 import com.transynq.repository.ReadingRepository;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -17,6 +21,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/assets/{id}")
+@Validated
 public class HistoryController {
 
     private final AssetRepository assetRepository;
@@ -32,15 +37,15 @@ public class HistoryController {
     }
 
     @GetMapping("/history")
-    public List<ReadingDto> getHistory(@PathVariable Long id,
-                                       @RequestParam(defaultValue = "60") int minutes) {
+    public List<ReadingDto> getHistory(
+            @PathVariable @Positive(message = "Asset ID must be positive") Long id,
+            @RequestParam(defaultValue = "60") @Min(value = 1, message = "Minutes must be at least 1")
+            @Max(value = 10080, message = "Minutes cannot exceed 10080 (7 days)") int minutes) {
         if (!assetRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Asset not found: " + id);
         }
 
-        // Bound minutes to safe range [1, 1440 * 7]
-        int safeMinutes = Math.max(1, Math.min(10080, minutes));
-        Instant cutoff = Instant.now().minus(safeMinutes, ChronoUnit.MINUTES);
+        Instant cutoff = Instant.now().minus(minutes, ChronoUnit.MINUTES);
 
         List<Reading> readings = readingRepository.findByAssetIdAndRecordedAtAfterOrderByRecordedAtDesc(id, cutoff);
         return readings.stream()
@@ -49,8 +54,9 @@ public class HistoryController {
     }
 
     @GetMapping("/alerts")
-    public List<Alert> getAlerts(@PathVariable Long id,
-                                 @RequestParam(required = false, defaultValue = "false") boolean activeOnly) {
+    public List<Alert> getAlerts(
+            @PathVariable @Positive(message = "Asset ID must be positive") Long id,
+            @RequestParam(required = false, defaultValue = "false") boolean activeOnly) {
         if (!assetRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Asset not found: " + id);
         }
