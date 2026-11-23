@@ -188,7 +188,7 @@ In compliance with the take-home submission ground rules:
 
 - **What AI tools were used:** Assisted by agentic AI (Antigravity with Google DeepMind models) for scaffolding repetitive boilerplate, Spring Boot JPA repository setups, and CSS layout adaptation.
 - **How the code was verified:**
-  1. **Automated Test Suite:** Executed `mvn test` verifying 5/5 unit and integration tests covering threshold boundaries, multi-parameter scoring, and Spring application context bootstrapping.
+  1. **Automated Test Suite:** Executed `mvn test` verifying 23/23 unit and integration tests (0 failures, 0 errors) covering health evaluation threshold boundaries, multi-parameter scoring, alert deduplication and severity escalation, REST API validation, and Spring application context bootstrapping. Full test documentation available in `TESTING.md`.
   2. **End-to-End API Audit:** Scripted PowerShell verification for all REST endpoints (`/api/assets`, `/latest`, `/history`, `/alerts`, `/scenario`) across all 3 seeded assets.
   3. **Live SSE Stream Inspection:** Verified raw `text/event-stream` chunks delivered every 3 seconds with bounded physics drift.
   4. **Security Verification:** Tested invalid scenario payloads (`400 Bad Request`), missing IDs (`404 Not Found`), and OWASP response headers (`X-Frame-Options`, `X-Content-Type-Options`).
