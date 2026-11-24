@@ -9,6 +9,7 @@ import ScenarioControls from "../components/ScenarioControls";
 import { useAsset } from "../context/AssetContext";
 import {
   fetchLatestReading,
+  fetchHistory,
   fetchAlerts,
   setScenario as apiSetScenario,
   subscribeToStream,
@@ -55,16 +56,32 @@ export default function Dashboard() {
   useEffect(() => {
     let isMounted = true;
 
-    // 1. Fetch latest reading
-    fetchLatestReading(assetId)
-      .then((data) => {
-        if (isMounted && data) {
-          setCurrentReading(data);
-          setScenario(data.scenario || "NORMAL");
-          setReadingsBuffer([data]);
-        }
-      })
-      .catch((err) => console.warn("Failed to fetch initial latest reading:", err));
+    // 1. Fetch recent telemetry history to immediately populate charts + latest reading
+    Promise.allSettled([
+      fetchHistory(assetId, 15),
+      fetchLatestReading(assetId),
+    ]).then(([historyRes, latestRes]) => {
+      if (!isMounted) return;
+
+      const history =
+        historyRes.status === "fulfilled" && Array.isArray(historyRes.value)
+          ? historyRes.value
+          : [];
+      const latest = latestRes.status === "fulfilled" ? latestRes.value : null;
+
+      if (history.length > 0) {
+        // history is sorted newest-first by the backend; take last 25 and reverse for chronological order
+        const chronological = history.slice(0, 25).reverse();
+        setReadingsBuffer(chronological);
+        const newest = history[0];
+        setCurrentReading(newest);
+        setScenario(newest.scenario || "NORMAL");
+      } else if (latest) {
+        setCurrentReading(latest);
+        setScenario(latest.scenario || "NORMAL");
+        setReadingsBuffer([latest]);
+      }
+    });
 
     // 2. Fetch initial alerts
     refreshAlerts();
@@ -80,8 +97,14 @@ export default function Dashboard() {
           setScenario(reading.scenario);
         }
 
-        // Keep last 40 readings for responsive charting
+        // Keep last 40 readings for responsive charting, preventing duplicate timestamps
         setReadingsBuffer((prev) => {
+          if (
+            prev.length > 0 &&
+            prev[prev.length - 1].timestamp === reading.timestamp
+          ) {
+            return prev;
+          }
           const updated = [...prev, reading];
           return updated.slice(-40);
         });
