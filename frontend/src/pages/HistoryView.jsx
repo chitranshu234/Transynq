@@ -39,8 +39,14 @@ export default function HistoryView() {
   // Chart data preparation
   const labels = readings.map((r) => {
     if (!r.timestamp) return "";
-    const timePart = r.timestamp.includes("T") ? r.timestamp.split("T")[1] : r.timestamp;
-    return timePart.slice(0, 8);
+    try {
+      const d = new Date(r.timestamp);
+      return isNaN(d.getTime())
+        ? (r.timestamp.includes("T") ? r.timestamp.split("T")[1].slice(0, 8) : r.timestamp)
+        : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+    } catch {
+      return r.timestamp;
+    }
   });
 
   const thermalData = {
@@ -220,7 +226,18 @@ export default function HistoryView() {
                   readings.map((r, i) => (
                     <tr key={i} className="hover:bg-blue-50/40 transition-colors">
                       <td className="py-2.5 font-mono text-slate-600">
-                        {r.timestamp ? r.timestamp.replace("T", " ").slice(0, 19) : "--"}
+                        {r.timestamp
+                          ? (() => {
+                              try {
+                                const d = new Date(r.timestamp);
+                                return isNaN(d.getTime())
+                                  ? r.timestamp.replace("T", " ").slice(0, 19)
+                                  : d.toLocaleString([], { dateStyle: "short", timeStyle: "medium" });
+                              } catch {
+                                return r.timestamp;
+                              }
+                            })()
+                          : "--"}
                       </td>
                       <td className="py-2.5 text-slate-800 font-semibold">
                         {r.oilTemperature?.toFixed(1)} °C

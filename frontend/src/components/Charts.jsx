@@ -25,14 +25,24 @@ ChartJS.register(
   Filler
 );
 
+const formatLocalTime = (timestamp) => {
+  if (!timestamp) return "";
+  try {
+    const d = new Date(timestamp);
+    if (isNaN(d.getTime())) {
+      const timePart = timestamp.includes("T") ? timestamp.split("T")[1] : timestamp;
+      return timePart.slice(0, 8);
+    }
+    return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+  } catch {
+    return timestamp;
+  }
+};
+
 export function TemperatureChart({ readings = [] }) {
   const chartRef = useRef(null);
   const dataPoints = readings.slice(-20);
-  const labels = dataPoints.map((r) => {
-    if (!r.timestamp) return "";
-    const timePart = r.timestamp.includes("T") ? r.timestamp.split("T")[1] : r.timestamp;
-    return timePart.slice(0, 8);
-  });
+  const labels = dataPoints.map((r) => formatLocalTime(r.timestamp));
 
   const oilValues = dataPoints.map((r) => r.oilTemperature);
   const windingValues = dataPoints.map((r) => r.windingTemperature);
@@ -120,7 +130,7 @@ export function TemperatureChart({ readings = [] }) {
       <div className="flex items-center justify-between mb-2">
         <div>
           <h3 className="text-sm font-bold text-slate-800">Thermal Dynamics</h3>
-          <p className="text-xs text-slate-400">Top Oil vs. Winding Hotspot Profile</p>
+          <p className="text-xs text-slate-400">Top Oil and Winding Hotspot Profile</p>
         </div>
         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
           Dual Thermocouples
@@ -136,11 +146,7 @@ export function TemperatureChart({ readings = [] }) {
 export function LoadChart({ readings = [] }) {
   const chartRef = useRef(null);
   const dataPoints = readings.slice(-20);
-  const labels = dataPoints.map((r) => {
-    if (!r.timestamp) return "";
-    const timePart = r.timestamp.includes("T") ? r.timestamp.split("T")[1] : r.timestamp;
-    return timePart.slice(0, 8);
-  });
+  const labels = dataPoints.map((r) => formatLocalTime(r.timestamp));
 
   const loadValues = dataPoints.map((r) => r.loadPercentage);
 
@@ -207,7 +213,7 @@ export function LoadChart({ readings = [] }) {
       <div className="flex items-center justify-between mb-2">
         <div>
           <h3 className="text-sm font-bold text-slate-800">Operational Loading</h3>
-          <p className="text-xs text-slate-400">Active Load vs. Rated Capacity</p>
+          <p className="text-xs text-slate-400">Transformer Loading Over Time</p>
         </div>
         <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-cyan-50 text-cyan-700 border border-cyan-200">
           CT Secondary

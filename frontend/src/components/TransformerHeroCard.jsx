@@ -116,7 +116,18 @@ export default function TransformerHeroCard({
             <span>Last Telemetry</span>
           </div>
           <p className="text-xs font-mono font-bold leading-tight mt-1 truncate">
-            {lastUpdated ? lastUpdated.split("T")[1]?.slice(0, 8) || lastUpdated : "Live"}
+            {lastUpdated
+              ? (() => {
+                  try {
+                    const d = new Date(lastUpdated);
+                    return isNaN(d.getTime())
+                      ? lastUpdated.split("T")[1]?.slice(0, 8) || lastUpdated
+                      : d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+                  } catch {
+                    return lastUpdated;
+                  }
+                })()
+              : "Live"}
           </p>
         </div>
       </div>
