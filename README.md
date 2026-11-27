@@ -182,7 +182,7 @@ transynq/
 └── README.md
 ```
 
-## AI Usage Note (Submission Requirement)
+## AI Usage Note 
 
 In compliance with the take-home submission ground rules:
 
@@ -196,12 +196,12 @@ In compliance with the take-home submission ground rules:
   - **Overruled Architecture Complexity:** AI initially proposed a heavy event-driven architecture using Apache Kafka and bi-directional WebSockets with full Spring Security OAuth2. I overruled this design because transformer telemetry is unidirectional (device-to-cloud), and over-engineering distributed message brokers introduces unnecessary operational failure points. Instead, I mandated **Server-Sent Events (SSE)** with Spring `SseEmitter` and a dedicated `ScenarioSecurityService`. This reduced token overhead, zeroed external broker latency, eliminated dependency bloat, and ensured 100% reliable auto-reconnects in the browser.
   - **Overruled Random Jumps for Thermal Physics:** When AI first drafted the simulation tick, it used unconstrained random numbers. I overruled this with a **bounded thermal inertia equation** where oil and winding temperatures drift smoothly and follow ambient lag, mimicking real thermodynamic behavior.
 
-## Key Decisions & Interview Talking Points
+## Key Engineering Decisions & Refinements
 
-During the technical interview walkthrough:
-1. **Decision Changed — FetchType LAZY vs EAGER:** Originally, JPA entity relationships (`Reading.asset` and `Alert.asset`) were marked `FetchType.LAZY`. When streaming DTOs over SSE outside a transactional boundary, this triggered `LazyInitializationException`. I evaluated `@Transactional(readOnly = true)` on controller vs `FetchType.EAGER`. I chose `FetchType.EAGER` because `Asset` is a small reference entity with only 6 scalar fields, completely eliminating N+1 overhead while guaranteeing thread-safe serialization for async SSE workers.
-2. **Transition-Based Alerting:** Rather than firing an alert record on every 3-second simulation tick during a fault (which would flood the database with thousands of duplicate rows per hour), the alert service triggers only on **state transitions** (e.g. `HEALTHY` → `WARNING` or `WARNING` → `CRITICAL`). When normal conditions resume, the open alert is timestamped with `resolvedAt`.
-3. **Multi-Asset Scalability:** The backend simulation loop dynamically iterates `assetRepository.findAll()`. Adding new switchgears, generators, or transformers requires no changes to the simulation engine or frontend routing.
+1. **JPA Fetch Strategy Revision (`FetchType.LAZY` → `FetchType.EAGER`):** Originally, `Reading.asset` and `Alert.asset` were configured with `FetchType.LAZY`. When building `ReadingDto` during asynchronous SSE broadcasts outside an active JPA session, accessing the proxy triggered `LazyInitializationException`. Because `spring.jpa.open-in-view` is disabled (`false`), switching to `FetchType.EAGER` guarantees thread-safe DTO serialization for SSE workers with negligible overhead since `Asset` is a compact 6-field reference entity.
+2. **Transition-Based Alerting:** Rather than inserting a new alert record on every 3-second simulation tick during an active fault, `AlertService` tracks per-parameter states in a `ConcurrentHashMap` and persists changes only on **state transitions** (e.g., `HEALTHY` → `WARNING` or `WARNING` → `CRITICAL`). When severity escalates or readings recover to normal, the prior active alert is automatically resolved with a `resolvedAt` timestamp.
+3. **Dashboard History Hydration & Timezone Alignment:** On initial load or asset switch, the dashboard fetches recent telemetry from `/api/assets/{id}/history?minutes=15` to pre-populate charts with up to 25 chronological readings before attaching the live SSE stream (with timestamp deduplication). Backend UTC ISO-8601 timestamps are formatted into the client's local timezone across charts, cards, and audit logs.
+4. **Multi-Asset Extensibility:** `SimulationService` iterates `assetRepository.findAll()` dynamically on each 3-second tick, while `AssetContext` loads the asset catalog from `/api/assets`. Additional transformers or switchgear panels can be added without changing the simulation loop or frontend routing.
 
 ## Research Note
 
